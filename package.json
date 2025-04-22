@@ -11,5 +11,14 @@
   "description": "",
   "dependencies": {
     "serverless": "^4.14.1"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.25.1",
+    "@types/aws-lambda": "^8.10.149",
+    "@types/node": "^22.14.1",
+    "eslint": "^8.57.1",
+    "globals": "^16.0.0",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.31.0"
   }
 }
