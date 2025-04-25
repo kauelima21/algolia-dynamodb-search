@@ -6,9 +6,10 @@ import tseslint from 'typescript-eslint';
 /** @type {import('eslint').Linter.Config[]} */
 export default [
     {
-        files: ['**/*.{js,mjs,cjs,ts}'],
+        files: ['./src/*.{js,mjs,cjs,ts}'],
         rules: {
-            quotes: ['error', 'single']
+            quotes: ['error', 'single'],
+            'object-curly-spacing': ['error', 'always']
         }
     },
     {languageOptions: {globals: globals.node}},

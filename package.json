@@ -10,13 +10,19 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "serverless": "^4.14.1"
+    "@aws-sdk/client-dynamodb": "^3.788.0",
+    "@aws-sdk/lib-dynamodb": "^3.789.0",
+    "@aws-sdk/util-dynamodb": "^3.796.0",
+    "algoliasearch": "^5.23.4",
+    "zod": "^3.24.3"
   },
   "devDependencies": {
     "@eslint/js": "^9.25.1",
+    "serverless": "^4.14.1",
+    "@stylistic/eslint-plugin-js": "^4.2.0",
     "@types/aws-lambda": "^8.10.149",
     "@types/node": "^22.14.1",
-    "eslint": "^8.57.1",
+    "eslint": "^9.25.1",
     "globals": "^16.0.0",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.31.0"

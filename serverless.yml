@@ -1,0 +1,89 @@
+org: kauelima21
+service: dynamodb-algolia
+
+provider:
+    name: aws
+    runtime: nodejs20.x
+    region: sa-east-1
+    architecture: arm64
+    environment:
+        PRODUCTS_TABLE: !Ref ProductsTable
+        ALGOLIA_APP_ID: ${env:ALGOLIA_APP_ID}
+        ALGOLIA_API_KEY: ${env:ALGOLIA_API_KEY}
+    iam:
+        role:
+            statements:
+                - Effect: Allow
+                  Action:
+                      - dynamodb:PutItem
+                      - dynamodb:UpdateItem
+                      - dynamodb:DeleteItem
+                  Resource: !GetAtt ProductsTable.Arn
+
+package:
+    individually: true
+
+build:
+    esbuild:
+        bundle: true
+        minify: true
+        sourcemap: false
+        exclude:
+            - '@aws-sdk/*'
+
+functions:
+    createProduct:
+        name: createProduct
+        handler: src/functions/createProduct.handler
+        events:
+            - httpApi:
+                path: /products
+                method: POST
+    updateProduct:
+        name: updateProduct
+        handler: src/functions/updateProduct.handler
+        events:
+            - httpApi:
+                path: /products/{productId}
+                method: PUT
+    deleteProduct:
+        name: deleteProduct
+        handler: src/functions/deleteProduct.handler
+        events:
+            - httpApi:
+                path: /products/{productId}
+                method: DELETE
+    processStreams:
+        name: processStreams
+        handler: src/functions/processStreams.handler
+        events:
+            - stream:
+                type: dynamodb
+                arn: !GetAtt ProductsTable.StreamArn
+                batchSize: 5
+                maximumRetryAttempts: 2
+                destinations:
+                    onFailure:
+                        type: sqs
+                        arn: !GetAtt DynamDBStreamsDQL.Arn
+
+resources:
+    Resources:
+        ProductsTable:
+            Type: AWS::DynamoDB::Table
+            Properties:
+                TableName: ProductsTable
+                BillingMode: PAY_PER_REQUEST
+                AttributeDefinitions:
+                    - AttributeName: id
+                      AttributeType: S
+                KeySchema:
+                    - AttributeName: id
+                      KeyType: HASH
+                StreamSpecification:
+                    StreamViewType: NEW_AND_OLD_IMAGES
+        DynamDBStreamsDQL:
+            Type: AWS::SQS::Queue
+            Properties:
+                QueueName: DynamDBStreamsDQL
+                MessageRetentionPeriod: 1209600 # 14 days
