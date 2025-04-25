@@ -1,5 +1,11 @@
 import { Algoliasearch, algoliasearch } from "algoliasearch";
 
+interface ISearchParams {
+    query: string
+    page: number
+    perPage: number
+}
+
 export class AlgoliaService
 {
     private readonly client: Algoliasearch;
@@ -9,15 +15,21 @@ export class AlgoliaService
         this.client = algoliasearch(appId, apiKey);
     }
 
-    async search(query: string) {
-        const { hits } = await this.client.searchSingleIndex({
+    async search({ query, page, perPage }: ISearchParams) {
+        const { hits, nbHits, nbPages } = await this.client.searchSingleIndex({
             indexName: this.indexName,
             searchParams: {
                 query,
+                page,
+                hitsPerPage: perPage,
             },
         });
 
-        return hits;
+        return {
+            results: hits,
+            totalItems: nbHits,
+            totalPages: nbPages
+        };
     }
 
     async upsert(objectID: string, object: Record<string, unknown>)
