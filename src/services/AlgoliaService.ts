@@ -9,6 +9,17 @@ export class AlgoliaService
         this.client = algoliasearch(appId, apiKey);
     }
 
+    async search(query: string) {
+        const { hits } = await this.client.searchSingleIndex({
+            indexName: this.indexName,
+            searchParams: {
+                query,
+            },
+        });
+
+        return hits;
+    }
+
     async upsert(objectID: string, object: Record<string, unknown>)
     {
         await this.client.saveObject({

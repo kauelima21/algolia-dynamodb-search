@@ -32,6 +32,13 @@ build:
             - '@aws-sdk/*'
 
 functions:
+    searchProduct:
+        name: searchProduct
+        handler: src/functions/searchProduct.handler
+        events:
+            -   httpApi:
+                    path: /search
+                    method: GET
     createProduct:
         name: createProduct
         handler: src/functions/createProduct.handler
